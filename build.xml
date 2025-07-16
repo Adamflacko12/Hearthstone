@@ -8,22 +8,20 @@
 	<!--  Ninja: We read pom.xml file to find the Foundation version to use  -->
 	<xmlproperty file="pom.xml" prefix="pom" keeproot="false"/>
 	<property name="foundation.version" value="${pom.properties.foundation.version}"/>
+	<property name="foundation.path" value="${pom.properties.foundation.path}"/>
 	<!--  Change the name="" key on the top to your plugin's name
-                 and edit the path below to where your server is located.
+             and edit the path below to where your server is located.
 
-                 You can simply duplicate the <jar>...</jar> section
-                 to compile your plugin to multiple servers.  -->
+             You can simply duplicate the <jar>...</jar> section
+             to compile your plugin to multiple servers.  -->
 	<target name="Build">
 		<jar jarfile="C:\Users\death\Desktop\Coding Workspace\Workspace\1.21.1\plugins/${ant.project.name}.jar" basedir="./target/classes/" includes="**/*">
-			<!--  IF you have Foundation on your disk, remove the <zipgroupfileset> line and uncomment the <fileset> one. Repeat for the other <jar> goal below.
-                                 Foundation then needs to be in the same parent's folder as your plugin's source, such as workspace/Foundation and workspace/YourPlugin  -->
+			<!--  Using JitPack Foundation from Maven repository  -->
 			<zipgroupfileset dir="${user.home}/.m2/repository/com/github/kangarko/Foundation/${foundation.version}/" includes="**/*${foundation.version}.jar"/>
-			<!-- <fileset dir="../Foundation/target/classes"/> -->
 		</jar>
-		<!--  You can copy the <jar> block above multiple times if you have multi-version testing servers  -->
 		<jar jarfile="C:\Users\death\Desktop\Coding Workspace\Workspace\1.8.8\plugins/${ant.project.name}.jar" basedir="./target/classes/" includes="**/*">
+			<!--  Using JitPack Foundation from Maven repository  -->
 			<zipgroupfileset dir="${user.home}/.m2/repository/com/github/kangarko/Foundation/${foundation.version}/" includes="**/*${foundation.version}.jar"/>
-			<!-- <fileset dir="../Foundation/target/classes"/> -->
 		</jar>
 	</target>
 </project>

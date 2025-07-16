@@ -21,7 +21,6 @@ public class ArenaManager {
 	private List<Arena> arenas = new ArrayList<>();
 
 	public ArenaManager(Hearthstone hearthstone) {
-		hearthstone.getLogger().info("ArenaManager constructor called");
 		FileConfiguration config = hearthstone.getConfig();
 		for (String str : config.getConfigurationSection("arenas.").getKeys(false)) {
 			World world = Bukkit.createWorld(new WorldCreator(config.getString("arenas." + str + ".world")));
@@ -36,7 +35,7 @@ public class ArenaManager {
 				(float) config.getDouble("arenas." + str + ".spawns." + team + ".pitch")));
 			}
 			HashMap<Team, BedLocation> beds = new HashMap<>();
-			for (String team : config.getConfigurationSection("arenas." + str + ".spawns.").getKeys(false)) {
+			for (String team : config.getConfigurationSection("arenas." + str + ".beds.").getKeys(false)) {
 				beds.put(Team.valueOf(team.toUpperCase()), new BedLocation(
 						world,
 						config.getDouble("arenas." + str + ".beds." + team + ".x"),

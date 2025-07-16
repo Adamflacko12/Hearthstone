@@ -42,7 +42,7 @@ public class Game {
 
 		for (int i = 0; i < arena.getPlayers().size(); i++) {
 			UUID uuid = arena.getPlayers().get(i);
-			Team team = Team.values()[1];
+			Team team = Team.values()[i];
 			teams.put(uuid, team);
 			bedsAlive.put(team, true);
 
