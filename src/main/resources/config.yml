@@ -1,0 +1,59 @@
+required-players: 2
+countdown-seconds: 30
+lobby-spawn:
+  world: 'world'
+  x: 47.5
+  y: 120
+  z: 38.5
+  yaw: -88
+  pitch: 13
+arenas:
+  0:
+    world: 'world'
+    y-respawn: -63
+    spawns:
+      red:
+        x: 81.5
+        y: 105
+        z: 43.5
+        yaw: 98
+        pitch: -10
+      blue:
+        x: 52.5
+        y: 107
+        z: 74.5
+        yaw: 134
+        pitch: 1.8
+      green:
+        x: 16.5
+        y: 102
+        z: 46.5
+        yaw: -162
+        pitch: 21
+      yellow:
+        x: 45.5
+        y: 107
+        z: 10
+        yaw: -54
+        pitch: 25
+    beds:
+      red:
+        x: 81.5
+        y: 105
+        z: 43.5
+        facing: west
+      blue:
+        x: 52.5
+        y: 107
+        z: 74.5
+        facing: north
+      green:
+        x: 16.5
+        y: 102
+        z: 46.5
+        facing: south
+      yellow:
+        x: 45.5
+        y: 107
+        z: 10
+        facing: east
