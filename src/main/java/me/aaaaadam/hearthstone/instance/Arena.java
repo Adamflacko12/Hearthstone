@@ -2,6 +2,10 @@ package me.aaaaadam.hearthstone.instance;
 
 import me.aaaaadam.hearthstone.GameState;
 import me.aaaaadam.hearthstone.Hearthstone;
+import me.aaaaadam.hearthstone.kit.Kit;
+import me.aaaaadam.hearthstone.kit.KitType;
+import me.aaaaadam.hearthstone.kit.type.FighterKit;
+import me.aaaaadam.hearthstone.kit.type.MinerKit;
 import me.aaaaadam.hearthstone.manager.ConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -24,6 +28,7 @@ public class Arena {
 
 	private GameState state;
 	private List<UUID> players;
+	private HashMap<UUID, Kit> kits;
 	private Countdown countdown;
 	private Game game;
 
@@ -37,6 +42,7 @@ public class Arena {
 
 		this.state = GameState.RECRUITING;
 		this.players = new ArrayList<>();
+		this.kits = new HashMap<>();
 		this.countdown = new Countdown(hearthstone, this);
 		this.game = new Game(this);
 	}
@@ -50,10 +56,13 @@ public class Arena {
 		if (kickPlayers) {
 			Location loc = ConfigManager.getLobbySpawn();
 			for (UUID uuid : players) {
-				Bukkit.getPlayer(uuid).teleport(loc);
+				Player player = Bukkit.getPlayer(uuid);
+				player.teleport(loc);
+				removeKit(player.getUniqueId());
 			}
 			players.clear();
 		}
+		kits.clear();
 		sendTitle("", "");
 		state = GameState.RECRUITING;
 		countdown.cancel();
@@ -82,6 +91,8 @@ public class Arena {
 	public void addPlayer(Player player) {
 		players.add(player.getUniqueId());
 
+		player.sendMessage(ChatColor.GOLD + "Choose your kit with /arena kit!");
+
 		if (state.equals(GameState.RECRUITING) && players.size() >= ConfigManager.getRequiredPlayers()) {
 			countdown.start();
 		}
@@ -91,6 +102,8 @@ public class Arena {
 		players.remove(player.getUniqueId());
 		player.teleport(ConfigManager.getLobbySpawn());
 		player.sendTitle("", "");
+
+		removeKit(player.getUniqueId());
 
 		if (state == GameState.COUNTDOWN && players.size() < ConfigManager.getRequiredPlayers()) {
 			sendMessage(ChatColor.RED + "There's not enough players. Countdown Stopped.");
@@ -118,5 +131,26 @@ public class Arena {
 	public HashMap<Team, BedLocation> getBeds() { return beds; }
 
 	public void setState(GameState state) { this.state = state; }
+	public HashMap<UUID, Kit> getKits() { return kits; }
+
+	public void removeKit(UUID uuid) {
+		if (kits.containsKey(uuid)) {
+			kits.get(uuid).remove();
+			kits.remove(uuid);
+		}
+	}
+
+	public void setKit(UUID uuid, KitType type) {
+		if (type == KitType.MINER) {
+			kits.put(uuid, new MinerKit(hearthstone, uuid));
+		} else if (type == KitType.FIGHTER) {
+			kits.put(uuid, new FighterKit(hearthstone, uuid));
+
+		}
+	}
+
+	public KitType getKitType(Player player) {
+		return kits.containsKey(player.getUniqueId()) ? kits.get(player.getUniqueId()).getType() : null;
+	}
 
 }

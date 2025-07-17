@@ -1,10 +1,8 @@
 package me.aaaaadam.hearthstone.instance;
 
 import me.aaaaadam.hearthstone.GameState;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
+import me.aaaaadam.hearthstone.manager.ConfigManager;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Bed;
 import org.bukkit.entity.Player;
@@ -38,13 +36,16 @@ public class Game {
 		arena.setState(GameState.LIVE);
 		arena.sendMessage(ChatColor.GREEN + "Game has begun! Fight to the death!");
 
-
+		for (UUID uuid : arena.getKits().keySet()) {
+			arena.getKits().get(uuid).onStart(Bukkit.getPlayer(uuid));
+		}
 
 		for (int i = 0; i < arena.getPlayers().size(); i++) {
 			UUID uuid = arena.getPlayers().get(i);
 			Team team = Team.values()[i];
 			teams.put(uuid, team);
 			bedsAlive.put(team, true);
+			Bukkit.getPlayer(uuid).closeInventory();
 
 			BedLocation location = arena.getBeds().get(team);
 			Block block = location.getBlock();
@@ -57,30 +58,55 @@ public class Game {
 				block = block.getRelative(location.getFacing().getOppositeFace());
 			}
 
-				Player player = Bukkit.getPlayer(uuid);
-				player.setGameMode(GameMode.SURVIVAL);
-				player.getInventory().addItem(new ItemStack(Material.WOODEN_SWORD));
-				player.teleport(arena.getSpawns().get(team));
-				alive.add(uuid);
-			}
+			Player player = Bukkit.getPlayer(uuid);
+			player.setGameMode(GameMode.SURVIVAL);
+			player.getInventory().addItem(new ItemStack(Material.WOODEN_SWORD));
+			player.teleport(arena.getSpawns().get(team));
+			alive.add(uuid);
+		}
 
 		tasks.add(Bukkit.getScheduler().runTaskTimer(arena.getHearthstone(), () -> {
-			for (UUID uuid : alive ){
+			for (UUID uuid : alive) {
 				if (Bukkit.getPlayer(uuid).getLocation().getY() <= arena.getyRespawn()) {
-					Team team = teams.get(uuid);
-					if (bedsAlive.get(teams.get(uuid))) {
-						Bukkit.getPlayer(uuid).teleport(arena.getSpawns().get(team));
-					} else {
+					death(Bukkit.getPlayer(uuid));
 
-					}
 				}
 			}
 		}, 4, 4));
 	}
 
+	public void death(Player player) {
+			Team team = teams.get(player.getUniqueId());
+			if (bedsAlive.get(teams.get(team))) {
+				player.teleport(arena.getSpawns().get(team));
+				arena.sendMessage(player.getName() + " died and is respawning!");
+			} else {
+				player.teleport(ConfigManager.getLobbySpawn());
+				arena.sendMessage(player.getName() + " has ran out of lives!");
+				alive.remove(player.getUniqueId());
+
+				if (alive.size() == 1) {
+					arena.sendMessage(Bukkit.getPlayer(alive.get(0)).getName() + " has won!");
+					arena.reset(true);
+				}
+		}
+	}
+
+	public Location respawn(Player player) {
+		Team team = teams.get(player.getUniqueId());
+		if (bedsAlive.get(team)) {
+			return arena.getSpawns().get(team);
+		} else {
+			return ConfigManager.getLobbySpawn();
+		}
+	}
+
+
+
 	public boolean destroyBed(Team team, Player player) {
 		if (teams.get(player.getUniqueId()) == team) { return true; }
 		arena.sendMessage(player.getName() + " has broken " + team.getName() + "'s bed!");
+		bedsAlive.put(team, false);
 		return false;
 
 	}

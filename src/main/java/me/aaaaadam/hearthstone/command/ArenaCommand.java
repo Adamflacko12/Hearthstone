@@ -3,6 +3,7 @@ package me.aaaaadam.hearthstone.command;
 import me.aaaaadam.hearthstone.GameState;
 import me.aaaaadam.hearthstone.Hearthstone;
 import me.aaaaadam.hearthstone.instance.Arena;
+import me.aaaaadam.hearthstone.kit.KitUI;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -27,6 +28,17 @@ public class ArenaCommand implements CommandExecutor {
 				player.sendMessage(ChatColor.GREEN + "These are the available arenas:");
 				for (Arena arena : hearthstone.getArenaManager().getArenas()) {
 					player.sendMessage(ChatColor.GREEN + "- " + arena.getId() + "(" + arena.getState().name() + ")");
+				}
+			} else if (args.length == 1 && args[0].equalsIgnoreCase("kit")) {
+				Arena arena	= hearthstone.getArenaManager().getArena(player);
+				if (arena != null) {
+					if (arena.getState() != GameState.LIVE) {
+						new KitUI(player);
+					} else {
+						player.sendMessage(ChatColor.RED + "You cannot select a kit at this time!");
+					}
+				} else {
+					player.sendMessage(ChatColor.RED + "You are not in an arena!");
 				}
 			} else if (args.length == 1 && args[0].equalsIgnoreCase("leave")) {
 				Arena arena = hearthstone.getArenaManager().getArena(player);
@@ -70,6 +82,7 @@ public class ArenaCommand implements CommandExecutor {
 				player.sendMessage(ChatColor.RED + "- /arena list");
 				player.sendMessage(ChatColor.RED + "- /arena leave");
 				player.sendMessage(ChatColor.RED + "- /arena join <id>");
+				player.sendMessage(ChatColor.RED + "- /arena kit");
 			}
 		}
 
