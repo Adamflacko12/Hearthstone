@@ -8,6 +8,7 @@ import me.aaaaadam.hearthstone.instance.Team;
 import me.aaaaadam.hearthstone.kit.KitType;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,6 +16,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 public class GameListener implements Listener {
 
@@ -34,7 +37,7 @@ public class GameListener implements Listener {
 				e.setCancelled(game.destroyBed(Team.valueOf(e.getBlock().getMetadata("team").get(0).asString()), e.getPlayer()));
 			}
 
-			}
+		}
 	}
 
 	@EventHandler
@@ -60,30 +63,47 @@ public class GameListener implements Listener {
 
 	@EventHandler
 	public void onClick(InventoryClickEvent e) {
-
 		Player player = (Player) e.getWhoClicked();
 
 		if (e.getView().getTitle().contains("Kit Selection") && e.getInventory() != null && e.getCurrentItem() != null) {
 			e.setCancelled(true);
 
-			KitType type = KitType.valueOf(e.getCurrentItem().getItemMeta().getLocalizedName());
+			ItemMeta meta = e.getCurrentItem().getItemMeta();
+			if (meta != null) {
+				// Create the same NamespacedKey as used in KitUI
+				NamespacedKey kitKey = new NamespacedKey(hearthstone, "kit_type");
 
-			Arena arena = hearthstone.getArenaManager().getArena(player);
-			if (arena != null) {
-				KitType activated = arena.getKitType(player);
-				if (activated != null) {
-					player.sendMessage(ChatColor.RED + "You already have this kit equipped!");
+				// Get the kit type from PersistentDataContainer
+				String kitTypeName = meta.getPersistentDataContainer().get(kitKey, PersistentDataType.STRING);
+
+				if (kitTypeName != null) {
+					try {
+						KitType type = KitType.valueOf(kitTypeName);
+
+						Arena arena = hearthstone.getArenaManager().getArena(player);
+						if (arena != null) {
+							KitType activated = arena.getKitType(player);
+							if (activated != null) {
+								player.sendMessage(ChatColor.RED + "You already have this kit equipped!");
+							} else {
+								player.sendMessage(ChatColor.GREEN + "You have equipped the " + type.getDisplay() + ChatColor.GREEN + " Kit!");
+								arena.setKit(player.getUniqueId(), type);
+							}
+
+							player.closeInventory();
+						}
+					} catch (IllegalArgumentException ex) {
+						player.sendMessage(ChatColor.RED + "Invalid kit selection!");
+						player.closeInventory();
+					}
 				} else {
-					player.sendMessage(ChatColor.RED + "You have equipped the " + type.getDisplay() + ChatColor.GREEN + " Kit!");
-					arena.setKit(player.getUniqueId(), type);
+					player.sendMessage(ChatColor.RED + "No kit data found!");
+					player.closeInventory();
 				}
-
+			} else {
+				player.sendMessage(ChatColor.RED + "Item has no metadata!");
 				player.closeInventory();
 			}
 		}
 	}
-
 }
-
-
-

@@ -33,7 +33,7 @@ public class ArenaCommand implements CommandExecutor {
 				Arena arena	= hearthstone.getArenaManager().getArena(player);
 				if (arena != null) {
 					if (arena.getState() != GameState.LIVE) {
-						new KitUI(player);
+						new KitUI(player, hearthstone);
 					} else {
 						player.sendMessage(ChatColor.RED + "You cannot select a kit at this time!");
 					}
