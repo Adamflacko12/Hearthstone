@@ -28,7 +28,6 @@ public class KitUI {
 			isMeta.setDisplayName(type.getDisplay());
 			isMeta.setLore(Arrays.asList(type.getDescription()));
 
-			// Use PersistentDataContainer instead of deprecated getLocalizedName
 			isMeta.getPersistentDataContainer().set(kitKey, PersistentDataType.STRING, type.name());
 
 			is.setItemMeta(isMeta);

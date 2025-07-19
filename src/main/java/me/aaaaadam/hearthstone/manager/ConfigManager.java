@@ -16,6 +16,8 @@ public class ConfigManager {
 
 	public static int getRequiredPlayers() { return config.getInt("required-players"); }
 
+	public static int getMaxPlayers() { return config.getInt("max-players"); }
+
 	public static int getCountdownSeconds() { return config.getInt("countdown-seconds"); }
 
 	public static Location getLobbySpawn() {

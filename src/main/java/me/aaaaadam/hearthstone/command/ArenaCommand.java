@@ -4,6 +4,7 @@ import me.aaaaadam.hearthstone.GameState;
 import me.aaaaadam.hearthstone.Hearthstone;
 import me.aaaaadam.hearthstone.instance.Arena;
 import me.aaaaadam.hearthstone.kit.KitUI;
+import me.aaaaadam.hearthstone.manager.ConfigManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -64,7 +65,7 @@ public class ArenaCommand implements CommandExecutor {
 
 				if (id >= 0 && id < hearthstone.getArenaManager().getArenas().size()) {
 					Arena arena = hearthstone.getArenaManager().getArena(id);
-					if (arena.getPlayers().size() != 4) {
+					if (arena.getPlayers().size() != ConfigManager.getMaxPlayers()) {
 						if (arena.getState() == GameState.RECRUITING || arena.getState() == GameState.COUNTDOWN) {
 							player.sendMessage(ChatColor.GREEN + "You are now playing in Arena " + id + ".");
 							arena.addPlayer(player);

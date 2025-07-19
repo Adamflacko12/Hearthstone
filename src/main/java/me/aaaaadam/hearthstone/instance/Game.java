@@ -6,7 +6,6 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Bed;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -42,7 +41,7 @@ public class Game {
 
 		for (int i = 0; i < arena.getPlayers().size(); i++) {
 			UUID uuid = arena.getPlayers().get(i);
-			Team team = Team.values()[i];
+			Team team = Team.values()[i % Team.values().length];
 			teams.put(uuid, team);
 			bedsAlive.put(team, true);
 			Bukkit.getPlayer(uuid).closeInventory();
@@ -60,7 +59,6 @@ public class Game {
 
 			Player player = Bukkit.getPlayer(uuid);
 			player.setGameMode(GameMode.SURVIVAL);
-			player.getInventory().addItem(new ItemStack(Material.WOODEN_SWORD));
 			player.teleport(arena.getSpawns().get(team));
 			alive.add(uuid);
 		}

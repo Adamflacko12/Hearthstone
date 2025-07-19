@@ -6,6 +6,8 @@ import me.aaaaadam.hearthstone.kit.Kit;
 import me.aaaaadam.hearthstone.kit.KitType;
 import me.aaaaadam.hearthstone.kit.type.FighterKit;
 import me.aaaaadam.hearthstone.kit.type.MinerKit;
+import me.aaaaadam.hearthstone.kit.type.SkeletonKit;
+import me.aaaaadam.hearthstone.kit.type.StrikerKit;
 import me.aaaaadam.hearthstone.manager.ConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -141,11 +143,15 @@ public class Arena {
 	}
 
 	public void setKit(UUID uuid, KitType type) {
+		removeKit(uuid);
 		if (type == KitType.MINER) {
 			kits.put(uuid, new MinerKit(hearthstone, uuid));
 		} else if (type == KitType.FIGHTER) {
 			kits.put(uuid, new FighterKit(hearthstone, uuid));
-
+		} else if (type == KitType.STRIKER) {
+			kits.put(uuid, new StrikerKit(hearthstone, uuid));
+		} else if (type == KitType.SKELETON) {
+			kits.put(uuid, new SkeletonKit(hearthstone, uuid));
 		}
 	}
 

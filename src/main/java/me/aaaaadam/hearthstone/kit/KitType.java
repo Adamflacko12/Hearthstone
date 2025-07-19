@@ -6,7 +6,9 @@ import org.bukkit.Material;
 public enum KitType {
 
 	MINER(ChatColor.GOLD + "Miner", Material.DIAMOND_PICKAXE, "The best mining kit!"),
-	FIGHTER(ChatColor.RED + "Fighter", Material.IRON_SWORD, "the best fighting kit!");
+	FIGHTER(ChatColor.RED + "Fighter", Material.IRON_SWORD, "the best fighting kit!"),
+	STRIKER(ChatColor.WHITE + "Striker", Material.IRON_AXE, "The Striker Kit!"),
+	SKELETON(ChatColor.WHITE + "Skeleton", Material.IRON_HOE, "The Skeleton Kit!");
 
 	private String display, description;
 	private Material material;

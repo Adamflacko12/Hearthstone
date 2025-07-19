@@ -70,10 +70,8 @@ public class GameListener implements Listener {
 
 			ItemMeta meta = e.getCurrentItem().getItemMeta();
 			if (meta != null) {
-				// Create the same NamespacedKey as used in KitUI
 				NamespacedKey kitKey = new NamespacedKey(hearthstone, "kit_type");
 
-				// Get the kit type from PersistentDataContainer
 				String kitTypeName = meta.getPersistentDataContainer().get(kitKey, PersistentDataType.STRING);
 
 				if (kitTypeName != null) {
